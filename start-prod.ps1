@@ -126,6 +126,10 @@ Write-Host ""
 # frontend/dist lookup in app/main.py all resolve relative to the repo root.
 # No --reload in prod.
 Push-Location $scriptRoot
+# uvicorn/dependencies write normal warnings to stderr; with $ErrorActionPreference='Stop'
+# a merged stderr line would surface as a terminating NativeCommandError and abort the
+# launch, so relax it to 'Continue' while the server runs in the foreground.
+$ErrorActionPreference = 'Continue'
 try {
   $uvicornArgs = @(
     '-m', 'uvicorn', 'server:app',
